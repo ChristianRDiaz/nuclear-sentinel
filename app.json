@@ -9,6 +9,12 @@
     "ios": {
       "supportsTablet": true
     },
+    "owner": null,
+    "extra": {
+      "eas": {
+        "projectId": ""
+      }
+    },
     "android": {
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
