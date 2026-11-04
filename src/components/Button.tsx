@@ -1,24 +1,25 @@
 import React from 'react';
-import { TouchableOpacity, Text, StyleSheet, ActivityIndicator } from 'react-native';
+import { TouchableOpacity, Text, StyleSheet, ActivityIndicator, ViewStyle } from 'react-native';
 
 interface ButtonProps {
   title: string;
   onPress: () => void;
-  type?: 'primary' | 'secondary' | 'danger';
-  loading?: boolean;
+  variant?: "primary" | "secondary";
+  style?: ViewStyle;
+  disabled?: boolean;
 }
 
-export const Button: React.FC<ButtonProps> = ({ title, onPress, type = 'primary', loading = false }) => {
+export const Button: React.FC<ButtonProps> = ({ title, onPress, variant = "primary", style, disabled }) => {
   return (
     <TouchableOpacity
-      style={[styles.button, type === 'secondary' && styles.secondary, type === 'danger' && styles.danger]}
+      style={[styles.button, variant === "secondary" && styles.secondary, style, disabled && { opacity: 0.6 }]}
       onPress={onPress}
-      disabled={loading}
+      disabled={disabled}
     >
-      {loading ? (
+      {disabled ? (
         <ActivityIndicator color="#fff" />
       ) : (
-        <Text style={[styles.text, type === 'secondary' && styles.secondaryText]}>{title}</Text>
+        <Text style={[styles.text, variant === "secondary" && styles.secondaryText]}>{title}</Text>
       )}
     </TouchableOpacity>
   );
@@ -27,7 +28,7 @@ export const Button: React.FC<ButtonProps> = ({ title, onPress, type = 'primary'
 const styles = StyleSheet.create({
   button: {
     backgroundColor: '#004080',
-    padding: 14,
+    padding: 12,
     borderRadius: 8,
     alignItems: 'center',
     marginVertical: 6,
@@ -42,7 +43,7 @@ const styles = StyleSheet.create({
   },
   text: {
     color: '#fff',
-    fontSize: 16,
+    fontSize: 12,
     fontWeight: 'bold',
   },
   secondaryText: {

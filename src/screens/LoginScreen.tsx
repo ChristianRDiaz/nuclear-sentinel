@@ -1,6 +1,9 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, StyleSheet, Alert } from "react-native";
+import { View, Text, StyleSheet, Alert } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { Button } from "../components/Button";
+import { Input } from "../components/Input";
+import { Header } from "../components/Header";
 import { authenticateUser } from "../services/storage";
 import { User } from "../types";
 
@@ -25,7 +28,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess }) => {
     }
     
     setLoading(true);
-    const user = await authenticateUser(email.trim(),senha.trim());
+    const user = await authenticateUser(email.trim(), senha.trim());
     setLoading(false);
 
     if (user) {
@@ -39,61 +42,52 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess }) => {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Nuclear Sentinel</Text>
-      <Text style={styles.subtitle}>Acesso ao Sistema Nuclear</Text>
+    <SafeAreaView style={styles.container} edges={["top", "left", "right"]}>
+      {/* Header posicionado de forma limpa abaixo da Safe Area */}
+      <Header title="Nuclear Sentinel" subtitle="Acesso ao Sistema Nuclear" />
 
-      <View style={styles.form}>
-        <Text style={styles.label}>E-mail da empresa</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="ex: operador@amazul.com"
-          value={email}
-          onChangeText={setEmail}
-          autoCapitalize="none"
-          keyboardType="email-address"
-        />
-        <Text style={styles.label}>Senha</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="ex: senha123"
-          value={senha}
-          onChangeText={setSenha}
-          autoCapitalize="none"
-          keyboardType="default"
-          secureTextEntry
-        />
+      <View style={styles.content}>
+        <View style={styles.form}>
+          <Input
+            label="E-mail da empresa"
+            placeholder="ex: operador@amazul.com"
+            value={email}
+            onChangeText={setEmail}
+            autoCapitalize="none"
+            keyboardType="email-address"
+          />
 
-        <Button title="Entrar" onPress={handleLogin} loading={loading} />
+          <Input
+            label="Senha"
+            placeholder="ex: senha123"
+            value={senha}
+            onChangeText={setSenha}
+            autoCapitalize="none"
+            secureTextEntry
+          />
+
+          <Button title="Entrar" onPress={handleLogin} loading={loading} variant="primary" />
+        </View>
+
+        <View style={styles.hintContainer}>
+          <Text style={styles.hintTitle}>Contas de Teste:</Text>
+          <Text style={styles.hintText}>• Operador: operador@amazul.com</Text>
+          <Text style={styles.hintText}>• Supervisor: supervisor@amazul.com</Text>
+        </View>
       </View>
-
-      <View style={styles.hintContainer}>
-        <Text style={styles.hintTitle}>Contas de Teste:</Text>
-        <Text style={styles.hintText}>• Operador: operador@amazul.com</Text>
-        <Text style={styles.hintText}>• Supervisor: supervisor@amazul.com</Text>
-      </View>
-    </View>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
-    padding: 24,
     backgroundColor: "#f4f6f9",
   },
-  title: {
-    fontSize: 28,
-    fontWeight: "bold",
-    color: "#004080",
-    textAlign: "center",
-  },
-  subtitle: {
-    fontSize: 16,
-    color: "#666",
-    textAlign: "center",
-    marginBottom: 32,
+  content: {
+    flex: 1,
+    padding: 24,
+    justifyContent: "center",
   },
   form: {
     backgroundColor: "#fff",
@@ -104,20 +98,6 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
-  },
-  label: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: "#333",
-    marginBottom: 8,
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 8,
-    padding: 12,
-    fontSize: 16,
-    marginBottom: 16,
   },
   hintContainer: {
     marginTop: 24,

@@ -53,37 +53,39 @@ export default function App() {
 
   return (
     <SafeAreaProvider style={styles.container}>
-      <StatusBar barStyle="dark-content"/>
+      <StatusBar barStyle="dark-content" />
 
-      {currentScreen === 'login' && <LoginScreen onLoginSuccess={handleLoginSuccess} />}
+      {currentScreen === "login" && (
+        <LoginScreen onLoginSuccess={handleLoginSuccess} />
+      )}
 
-      {currentScreen === 'list' && user && (
+      {currentScreen === "list" && user && (
         <OccurrenceListScreen
           user={user}
           onSelectOccurrence={(occ) => {
             setSelectedOccurrence(occ);
-            setCurrentScreen('detail');
+            setCurrentScreen("detail");
           }}
-          onNavigateToCreate={() => setCurrentScreen('create')}
+          onCreateNew={() => setCurrentScreen("create")} 
           onLogout={handleLogout}
         />
       )}
 
-      {currentScreen === 'create' && user && (
+      {currentScreen === "create" && user && (
         <OccurrenceCreateScreen
           user={user}
-          onSuccess={() => setCurrentScreen('list')}
-          onCancel={() => setCurrentScreen('list')}
+          onSuccess={() => setCurrentScreen("list")}
+          onCancel={() => setCurrentScreen("list")}
         />
       )}
 
-      {currentScreen === 'detail' && selectedOccurrence && (
+      {currentScreen === "detail" && selectedOccurrence && (
         <OccurrenceDetailScreen
           occurrence={selectedOccurrence}
           user={user!}
           onBack={() => {
             setSelectedOccurrence(null);
-            setCurrentScreen('list');
+            setCurrentScreen("list");
           }}
         />
       )}
