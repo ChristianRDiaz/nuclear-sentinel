@@ -1,18 +1,13 @@
 import React, { useState } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  Alert,
-  TouchableOpacity,
-} from "react-native";
+import { View, Text, ScrollView, Alert, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Button } from "../components/Button";
 import { Input } from "../components/Input";
 import { Header } from "../components/Header";
 import { saveOccurrence } from "../services/storage";
 import { AlertLevel, OccurrenceStatus, User } from "../types";
+import { canCreateOccurrence } from "../utils/permissions";
+import { styles } from "../styles/OccurrenceCreateScreen.styles";
 
 interface OccurrenceCreateScreenProps {
   user: User;
@@ -32,6 +27,14 @@ export const OccurrenceCreateScreen: React.FC<OccurrenceCreateScreenProps> = ({
   const [loading, setLoading] = useState(false);
 
   const handleSave = async () => {
+    if (!canCreateOccurrence(user)) {
+      Alert.alert(
+        "Acesso Negado",
+        "Seu perfil não possui permissão para registrar novas ocorrências.",
+      );
+      return;
+    }
+
     if (!title.trim() || !description.trim() || !sector.trim()) {
       Alert.alert(
         "Erro de Validação",
@@ -59,11 +62,13 @@ export const OccurrenceCreateScreen: React.FC<OccurrenceCreateScreenProps> = ({
     }
   };
 
+  const alertLevels: AlertLevel[] = ["normal", "atípica", "crítica"];
+
   return (
     <SafeAreaView style={styles.container} edges={["top", "left", "right"]}>
       <Header
         title="Nova Ocorrência"
-        subtitle="Insira os detalhes do evento na instalação nuclear"
+        subtitle={`Operador: ${user.name} (${user.role.toUpperCase()})`}
       />
 
       <ScrollView contentContainerStyle={styles.scrollContent}>
@@ -84,7 +89,7 @@ export const OccurrenceCreateScreen: React.FC<OccurrenceCreateScreenProps> = ({
         <View style={styles.formGroup}>
           <Text style={styles.label}>Nível de Alerta *</Text>
           <View style={styles.radioContainer}>
-            {(["normal", "atípica", "crítica"] as AlertLevel[]).map((level) => (
+            {alertLevels.map((level) => (
               <TouchableOpacity
                 key={level}
                 style={[
@@ -124,68 +129,10 @@ export const OccurrenceCreateScreen: React.FC<OccurrenceCreateScreenProps> = ({
             loading={loading}
             variant="primary"
           />
-        
+
           <Button title="Cancelar" onPress={onCancel} variant="secondary" />
         </View>
       </ScrollView>
     </SafeAreaView>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#f4f6f9",
-  },
-  scrollContent: {
-    padding: 20,
-    flexGrow: 1,
-  },
-  formGroup: {
-    marginBottom: 16,
-  },
-  label: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: "#333",
-    marginBottom: 6,
-  },
-  textArea: {
-    height: 100,
-    textAlignVertical: "top",
-    borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 8,
-    padding: 10,
-    backgroundColor: "#fff",
-  },
-  radioContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-  },
-  radioButton: {
-    flex: 1,
-    borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 8,
-    padding: 10,
-    alignItems: "center",
-    marginHorizontal: 4,
-    backgroundColor: "#fff",
-  },
-  radioSelected: {
-    backgroundColor: "#004080",
-    borderColor: "#004080",
-  },
-  radioText: {
-    fontSize: 12,
-    fontWeight: "bold",
-    color: "#333",
-  },
-  radioTextSelected: {
-    color: "#fff",
-  },
-  buttonContainer: {
-    marginTop: 10,
-  },
-});

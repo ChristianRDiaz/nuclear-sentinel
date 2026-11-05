@@ -1,11 +1,12 @@
-import React from 'react';
-import { View, ActivityIndicator, Text, StyleSheet } from 'react-native';
+import React from "react";
+import { View, ActivityIndicator, Text } from "react-native";
+import { styles } from "../styles/Loading.styles";
 
 interface LoadingProps {
   message?: string;
 }
 
-export const Loading = ({ message = 'Carregando...' }: LoadingProps) => {
+export const Loading = ({ message = "Carregando..." }: LoadingProps) => {
   return (
     <View style={styles.container}>
       <ActivityIndicator size="large" color="#1e3a8a" />
@@ -13,18 +14,3 @@ export const Loading = ({ message = 'Carregando...' }: LoadingProps) => {
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#f8fafc',
-  },
-  text: {
-    marginTop: 12,
-    fontSize: 14,
-    color: '#475569',
-    fontWeight: '500',
-  },
-});

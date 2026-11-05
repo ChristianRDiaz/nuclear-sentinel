@@ -1,19 +1,19 @@
-import { User, Occurrence } from '../types';
+import { User, Occurrence } from "../types";
 
 export const MOCK_USERS: User[] = [
   {
-    id: '1',
-    name: 'Operador Padrão',
-    email: 'operador@amazul.com',
-    senha: 'operador123',
-    role: 'operador',
+    id: "1",
+    name: "Operador Padrão",
+    email: "operador@amazul.com",
+    senha: "operador123",
+    role: "operador",
   },
   {
-    id: '2',
-    name: 'Supervisor Chefe',
-    email: 'supervisor@amazul.com',
-    senha: 'supervisor123',
-    role: 'supervisor',
+    id: "2",
+    name: "Supervisor Chefe",
+    email: "supervisor@amazul.com",
+    senha: "supervisor123",
+    role: "supervisor",
   },
 ];
 
@@ -48,7 +48,7 @@ export const MOCK_OCCURRENCES: Occurrence[] = [
     sector: "Setor C - Contenção",
     alertLevel: "crítica",
     status: "aberta",
-    createdAt: new Date(Date.now() - 1800000).toISOString(), // Há 30 minutos
+    createdAt: new Date(Date.now() - 1800000).toISOString(),
     author: "Operador Padrão",
   },
   {
@@ -59,7 +59,7 @@ export const MOCK_OCCURRENCES: Occurrence[] = [
     sector: "Setor D - Resíduos",
     alertLevel: "atípica",
     status: "em análise",
-    createdAt: new Date(Date.now() - 172800000).toISOString(), // Há 2 dias
+    createdAt: new Date(Date.now() - 172800000).toISOString(),
     author: "Supervisor Chefe",
   },
   {
@@ -70,7 +70,7 @@ export const MOCK_OCCURRENCES: Occurrence[] = [
     sector: "Setor E - Administrativo",
     alertLevel: "normal",
     status: "resolvida",
-    createdAt: new Date(Date.now() - 259200000).toISOString(), // Há 3 dias
+    createdAt: new Date(Date.now() - 259200000).toISOString(),
     author: "Operador Padrão",
   },
   {
@@ -81,7 +81,7 @@ export const MOCK_OCCURRENCES: Occurrence[] = [
     sector: "Setor F - Elétrica",
     alertLevel: "crítica",
     status: "aberta",
-    createdAt: new Date(Date.now() - 900000).toISOString(), // Há 15 minutos
+    createdAt: new Date(Date.now() - 900000).toISOString(),
     author: "Supervisor Chefe",
   },
 ];

@@ -1,10 +1,11 @@
 import React, { useState } from "react";
-import { View, Text, StyleSheet, ScrollView, Alert } from "react-native";
+import { View, Text, ScrollView, Alert } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Header } from "../components/Header";
 import { Button } from "../components/Button";
-import { Occurrence, User } from "../types";
+import { Occurrence, OccurrenceStatus, User } from "../types";
 import { updateOccurrenceStatus } from "../services/storage";
+import { styles } from "../styles/OccurrenceDetailScreen.styles";
 
 interface OccurrenceDetailScreenProps {
   occurrence: Occurrence;
@@ -17,13 +18,14 @@ export const OccurrenceDetailScreen: React.FC<OccurrenceDetailScreenProps> = ({
   user,
   onBack,
 }) => {
-  const [currentStatus, setCurrentStatus] = useState(occurrence.status);
+  const [currentStatus, setCurrentStatus] = useState<OccurrenceStatus>(
+    occurrence.status,
+  );
   const [loading, setLoading] = useState(false);
 
-  const handleStatusChange = async (newStatus: string) => {
+  const handleStatusChange = async (newStatus: OccurrenceStatus) => {
     try {
       setLoading(true);
-      // Chama a função passando o ID exato da ocorrência
       await updateOccurrenceStatus(occurrence.id, newStatus);
       setCurrentStatus(newStatus);
       setLoading(false);
@@ -34,7 +36,7 @@ export const OccurrenceDetailScreen: React.FC<OccurrenceDetailScreenProps> = ({
         [
           {
             text: "OK",
-            onPress: () => onBack(), // Voltar para a lista já atualizada
+            onPress: () => onBack(),
           },
         ],
       );
@@ -64,7 +66,6 @@ export const OccurrenceDetailScreen: React.FC<OccurrenceDetailScreenProps> = ({
           <Text style={styles.info}>Registrado por: {occurrence.author}</Text>
           <Text style={styles.description}>{occurrence.description}</Text>
 
-          {/* ÁREA EXCLUSIVA DO SUPERVISOR */}
           {isSupervisor && (
             <View style={styles.supervisorSection}>
               <Text style={styles.supervisorTitle}>
@@ -107,49 +108,3 @@ export const OccurrenceDetailScreen: React.FC<OccurrenceDetailScreenProps> = ({
     </SafeAreaView>
   );
 };
-
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#f4f6f9" },
-  scrollContent: { padding: 20 },
-  card: {
-    backgroundColor: "#fff",
-    borderRadius: 12,
-    padding: 20,
-    marginBottom: 16,
-  },
-  title: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: "#1e293b",
-    marginBottom: 12,
-  },
-  info: { fontSize: 14, color: "#475569", marginBottom: 6 },
-  statusBold: { fontWeight: "bold", color: "#004080" },
-  description: {
-    fontSize: 14,
-    color: "#334155",
-    marginTop: 10,
-    padding: 10,
-    backgroundColor: "#f8fafc",
-    borderRadius: 6,
-  },
-  supervisorSection: {
-    marginTop: 20,
-    paddingTop: 16,
-    borderTopWidth: 1,
-    borderTopColor: "#e2e8f0",
-  },
-  supervisorTitle: {
-    fontSize: 14,
-    fontWeight: "bold",
-    color: "#475569",
-    marginBottom: 10,
-  },
-  statusButtonsRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    gap: 6,
-  },
-  statusBtn: { flex: 1, paddingVertical: 8 },
-  backButton: { marginTop: 10 },
-});
