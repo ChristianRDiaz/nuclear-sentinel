@@ -1,13 +1,23 @@
 import React, { useState } from "react";
-import { View, Text, Alert, Image } from "react-native";
+import {
+  View,
+  Text,
+  Alert,
+  Image,
+  ScrollView,
+  KeyboardAvoidingView,
+  TouchableWithoutFeedback,
+  Platform,
+  Keyboard,
+} from "react-native";
+import { StatusBar } from "expo-status-bar";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Button } from "../components/Button";
-import { Input } from "../components/Input";
 import { Header } from "../components/Header";
+import { Input } from "../components/Input";
+import { Button } from "../components/Button";
 import { authenticateUser } from "../services/storage";
 import { User } from "../types";
 import { styles } from "../styles/LoginScreen.styles";
-
 
 interface LoginScreenProps {
   onLoginSuccess: (user: User) => void;
@@ -18,14 +28,30 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess }) => {
   const [senha, setSenha] = useState("");
   const [loading, setLoading] = useState(false);
 
+  const showAlert = (title: string, message: string, onOk?: () => void) => {
+    if (Platform.OS === "web") {
+      window.alert(`${title}\n\n${message}`);
+      if (onOk) onOk();
+    } else {
+      Alert.alert(title, message, [
+        {
+          text: "OK",
+          onPress: () => {
+            if (onOk) onOk();
+          },
+        },
+      ]);
+    }
+  };
+
   const handleLogin = async () => {
     if (!email.trim()) {
-      Alert.alert("Atenção", "Por favor, insira o seu e-mail.");
+      showAlert("Atenção", "Por favor, insira o seu e-mail.");
       return;
     }
 
     if (!senha.trim()) {
-      Alert.alert("Atenção", "Por favor, digite a sua senha.");
+      showAlert("Atenção", "Por favor, digite a sua senha.");
       return;
     }
 
@@ -43,14 +69,20 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess }) => {
     }
   };
 
-  return (
-    <SafeAreaView style={styles.container} edges={["top", "left", "right"]}>
+  const renderContent = () => (
+    <ScrollView
+      contentContainerStyle={styles.scrollContent}
+      showsVerticalScrollIndicator={false}
+      keyboardShouldPersistTaps="handled"
+    >
       <Header title="Nuclear Sentinel" subtitle="Acesso ao Sistema Nuclear" />
+
       <Image
         source={require("../../assets/Logo.png")}
         style={styles.logo}
         resizeMode="contain"
       />
+
       <View style={styles.content}>
         <View style={styles.form}>
           <Input
@@ -82,11 +114,27 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess }) => {
         <View style={styles.hintContainer}>
           <Text style={styles.hintTitle}>Contas de Teste:</Text>
           <Text style={styles.hintText}>• Operador: operador@amazul.com</Text>
-          <Text style={styles.hintText}>
-            • Supervisor: supervisor@amazul.com
-          </Text>
+          <Text style={styles.hintText}>• Supervisor: supervisor@amazul.com</Text>
         </View>
       </View>
+    </ScrollView>
+  );
+
+  return (
+    <SafeAreaView style={styles.container} edges={["top", "left", "right"]}>
+      <StatusBar style="light" />
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={{ flex: 1 }}
+      >
+        {Platform.OS === "web" ? (
+          renderContent()
+        ) : (
+          <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+            {renderContent()}
+          </TouchableWithoutFeedback>
+        )}
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
-};
+};;

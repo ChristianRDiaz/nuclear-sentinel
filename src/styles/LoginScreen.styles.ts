@@ -11,7 +11,7 @@ export const styles = StyleSheet.create({
     justifyContent: "center",
   },
   form: {
-    backgroundColor: "#fff",
+    backgroundColor: "#13273d",
     padding: 20,
     borderRadius: 12,
     elevation: 3,
@@ -23,21 +23,27 @@ export const styles = StyleSheet.create({
   hintContainer: {
     marginTop: 24,
     padding: 16,
-    backgroundColor: "#e6f0fa",
+    backgroundColor: "#13273d",
     borderRadius: 8,
   },
   hintTitle: {
     fontWeight: "bold",
-    color: "#004080",
+    color: "#ffffff",
     marginBottom: 4,
   },
   hintText: {
-    color: "#333",
+    color: "#ffffff",
     fontSize: 13,
   },
   logo: {
     width: 250,
     height: 250,
     alignSelf: "center",
+  },
+  scrollContent: {
+    flexGrow: 1,
+    justifyContent: "center",
+    paddingHorizontal: 20,
+    paddingBottom: 24,
   },
 });

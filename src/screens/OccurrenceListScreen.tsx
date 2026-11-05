@@ -6,8 +6,10 @@ import {
   TouchableOpacity,
   RefreshControl,
 } from "react-native";
+import { StatusBar } from "expo-status-bar";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Occurrence, User } from "../types";
+import { useFocusEffect } from "@react-navigation/native";
 import { getOccurrences } from "../services/storage";
 import { Header } from "../components/Header";
 import { Button } from "../components/Button";
@@ -30,7 +32,7 @@ export const OccurrenceListScreen: React.FC<OccurrenceListScreenProps> = ({
   onLogout,
 }) => {
   const [occurrences, setOccurrences] = useState<Occurrence[]>([]);
-  const [filter, setFilter] = useState<FilterStatus>("pendente");
+  const [filter, setFilter] = useState<FilterStatus>("todas");
   const [refreshing, setRefreshing] = useState(false);
 
   const loadData = async () => {
@@ -71,6 +73,7 @@ export const OccurrenceListScreen: React.FC<OccurrenceListScreenProps> = ({
 
   return (
     <SafeAreaView style={styles.container} edges={["top", "left", "right"]}>
+      <StatusBar style="light"/>
       <Header
         title={`Olá, ${user.name}`}
         subtitle={`Perfil: ${user.role.toUpperCase()}`}
@@ -79,7 +82,7 @@ export const OccurrenceListScreen: React.FC<OccurrenceListScreenProps> = ({
 
       <View style={styles.topActions}>
         <Text style={styles.sectionMainTitle}>Painel de Ocorrências</Text>
-        <Button title="+ Nova" onPress={onCreateNew} />
+        <Button title="+ Cadastrar Ocorrência" onPress={onCreateNew} />
       </View>
 
       <View style={styles.filterBar}>

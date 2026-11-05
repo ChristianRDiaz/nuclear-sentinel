@@ -3,7 +3,7 @@ import { StyleSheet } from "react-native";
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f4f6f9",
+    backgroundColor: "#0d1b2a",
   },
   topActions: {
     flexDirection: "row",
@@ -16,7 +16,7 @@ export const styles = StyleSheet.create({
   sectionMainTitle: {
     fontSize: 18,
     fontWeight: "bold",
-    color: "#004080",
+    color: "#fbfbfc",
   },
   newButton: {
     paddingHorizontal: 10,
@@ -33,16 +33,18 @@ export const styles = StyleSheet.create({
     flex: 1,
     paddingVertical: 8,
     borderRadius: 8,
-    backgroundColor: "#e2e8f0",
+    backgroundColor: "#13273d",
     alignItems: "center",
+    borderWidth: 1,
+    borderColor: "#cbd5e1",
   },
   activeFilterTab: {
-    backgroundColor: "#004080",
+    backgroundColor: "#575757",
   },
   filterTabText: {
-    fontSize: 11,
+    fontSize: 14,
     fontWeight: "600",
-    color: "#475569",
+    color: "#ffffff",
   },
   activeFilterTabText: {
     color: "#ffffff",
@@ -55,15 +57,17 @@ export const styles = StyleSheet.create({
     marginBottom: 16,
   },
   sectionHeader: {
-    backgroundColor: "#e6f0fa",
+    backgroundColor: "#13273d",
     padding: 10,
     borderRadius: 8,
     marginBottom: 8,
+    borderWidth: 1,
+    borderColor: "#cbd5e1",
   },
   sectionTitle: {
-    fontSize: 13,
+    fontSize: 15,
     fontWeight: "bold",
-    color: "#004080",
+    color: "#ffffff",
   },
   cardItem: {
     marginBottom: 8,
@@ -76,30 +80,32 @@ export const styles = StyleSheet.create({
     marginBottom: 6,
   },
   cardTitle: {
-    fontSize: 15,
+    fontSize: 18,
     fontWeight: "bold",
-    color: "#1e293b",
+    color: "#ffffff",
     flex: 1,
     marginRight: 8,
   },
   cardSector: {
-    fontSize: 13,
-    color: "#64748b",
+    fontSize: 15,
+    color: "#ffffff",
     marginBottom: 4,
   },
   cardDate: {
-    fontSize: 11,
-    color: "#94a3b8",
+    fontSize: 13,
+    color: "#ffffff",
   },
   badge: {
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 4,
+    borderWidth: 1,
+    borderColor: "#cbd5e1",
   },
   badgeText: {
-    color: "#fff",
-    fontSize: 10,
-    fontWeight: "bold",
+    color: "#ffffff",
+    fontSize: 13,
+    fontWeight: "700",
   },
   emptyState: {
     padding: 40,

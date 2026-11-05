@@ -1,6 +1,7 @@
 import React, { useState } from "react";
-import { View, Text, ScrollView, Alert, TouchableOpacity } from "react-native";
+import { View, Text, ScrollView, Alert, TouchableOpacity ,Platform} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { StatusBar } from "expo-status-bar";
 import { Button } from "../components/Button";
 import { Input } from "../components/Input";
 import { Header } from "../components/Header";
@@ -26,9 +27,25 @@ export const OccurrenceCreateScreen: React.FC<OccurrenceCreateScreenProps> = ({
   const [alertLevel, setAlertLevel] = useState<AlertLevel>("normal");
   const [loading, setLoading] = useState(false);
 
+  const showAlert = (title: string, message: string, onOk?: () => void) => {
+    if (Platform.OS === "web") {
+      window.alert(`${title}\n\n${message}`);
+      if (onOk) onOk();
+    } else {
+      Alert.alert(title, message, [
+        {
+          text: "OK",
+          onPress: () => {
+            if (onOk) onOk();
+          },
+        },
+      ]);
+    }
+  };
+
   const handleSave = async () => {
     if (!canCreateOccurrence(user)) {
-      Alert.alert(
+      showAlert(
         "Acesso Negado",
         "Seu perfil não possui permissão para registrar novas ocorrências.",
       );
@@ -36,7 +53,7 @@ export const OccurrenceCreateScreen: React.FC<OccurrenceCreateScreenProps> = ({
     }
 
     if (!title.trim() || !description.trim() || !sector.trim()) {
-      Alert.alert(
+      showAlert(
         "Erro de Validação",
         "Por favor, preencha todos os campos obrigatórios (Título, Descrição e Setor).",
       );
@@ -66,6 +83,7 @@ export const OccurrenceCreateScreen: React.FC<OccurrenceCreateScreenProps> = ({
 
   return (
     <SafeAreaView style={styles.container} edges={["top", "left", "right"]}>
+      <StatusBar style="light" />
       <Header
         title="Nova Ocorrência"
         subtitle={`Operador: ${user.name} (${user.role.toUpperCase()})`}
@@ -135,4 +153,4 @@ export const OccurrenceCreateScreen: React.FC<OccurrenceCreateScreenProps> = ({
       </ScrollView>
     </SafeAreaView>
   );
-};
+};;

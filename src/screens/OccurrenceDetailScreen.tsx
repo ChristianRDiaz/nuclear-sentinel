@@ -1,6 +1,7 @@
 import React, { useState } from "react";
-import { View, Text, ScrollView, Alert } from "react-native";
+import { View, Text, ScrollView, Alert ,Platform} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { StatusBar } from "expo-status-bar";
 import { Header } from "../components/Header";
 import { Button } from "../components/Button";
 import { Occurrence, OccurrenceStatus, User } from "../types";
@@ -23,6 +24,23 @@ export const OccurrenceDetailScreen: React.FC<OccurrenceDetailScreenProps> = ({
   );
   const [loading, setLoading] = useState(false);
 
+  // Função auxiliar para exibir alertas compatíveis com Mobile e Web
+  const showAlert = (title: string, message: string, onOk?: () => void) => {
+    if (Platform.OS === "web") {
+      window.alert(`${title}\n\n${message}`);
+      if (onOk) onOk();
+    } else {
+      Alert.alert(title, message, [
+        {
+          text: "OK",
+          onPress: () => {
+            if (onOk) onOk();
+          },
+        },
+      ]);
+    }
+  };
+
   const handleStatusChange = async (newStatus: OccurrenceStatus) => {
     try {
       setLoading(true);
@@ -30,19 +48,14 @@ export const OccurrenceDetailScreen: React.FC<OccurrenceDetailScreenProps> = ({
       setCurrentStatus(newStatus);
       setLoading(false);
 
-      Alert.alert(
+      showAlert(
         "Sucesso",
         `Status alterado para "${newStatus.toUpperCase()}".`,
-        [
-          {
-            text: "OK",
-            onPress: () => onBack(),
-          },
-        ],
+        () => onBack(),
       );
     } catch (error) {
       setLoading(false);
-      Alert.alert("Erro", "Não foi possível alterar o status.");
+      showAlert("Erro", "Não foi possível alterar o status.");
     }
   };
 
@@ -50,6 +63,7 @@ export const OccurrenceDetailScreen: React.FC<OccurrenceDetailScreenProps> = ({
 
   return (
     <SafeAreaView style={styles.container} edges={["top", "left", "right"]}>
+      <StatusBar style="light" />
       <Header
         title="Detalhes da Ocorrência"
         subtitle={`SETOR: ${occurrence.sector.toUpperCase()}`}

@@ -2,26 +2,28 @@ import { StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
   button: {
-    backgroundColor: "#004080",
-    padding: 12,
+    backgroundColor: "#13273d",
+    padding: 10,
     borderRadius: 8,
     alignItems: "center",
     marginVertical: 6,
+    borderWidth: 1,
+    borderColor: "#cbd5e1",
   },
   secondary: {
-    backgroundColor: "transparent",
+    backgroundColor: "#b52a2a",
     borderWidth: 1,
-    borderColor: "#004080",
+    borderColor: "#b52a2a",
   },
   danger: {
     backgroundColor: "#b52a2a",
   },
   text: {
     color: "#fff",
-    fontSize: 12,
-    fontWeight: "bold",
+    fontSize: 16,
+    fontWeight: "600",
   },
   secondaryText: {
-    color: "#004080",
+    color: "#ffffff",
   },
 });

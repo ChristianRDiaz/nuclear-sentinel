@@ -3,7 +3,7 @@ import { StyleSheet } from "react-native";
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f4f6f9",
+    backgroundColor: "#0d1b2a",
   },
   scrollContent: {
     padding: 20,
@@ -12,9 +12,9 @@ export const styles = StyleSheet.create({
     marginBottom: 16,
   },
   label: {
-    fontSize: 14,
+    fontSize: 17,
     fontWeight: "600",
-    color: "#334155",
+    color: "#ffffff",
     marginBottom: 8,
   },
   radioContainer: {
@@ -30,16 +30,16 @@ export const styles = StyleSheet.create({
     borderRadius: 8,
     borderWidth: 1,
     borderColor: "#cbd5e1",
-    backgroundColor: "#ffffff",
+    backgroundColor: "#13273d",
   },
   radioSelected: {
-    backgroundColor: "#004080",
-    borderColor: "#004080",
+    backgroundColor: "#575757",
+    borderColor: "#cbd5e1",
   },
   radioText: {
     fontSize: 12,
     fontWeight: "600",
-    color: "#475569",
+    color: "#fafafa",
   },
   radioTextSelected: {
     color: "#ffffff",
@@ -51,9 +51,9 @@ export const styles = StyleSheet.create({
     borderColor: "#cbd5e1",
     borderRadius: 8,
     padding: 10,
-    backgroundColor: "#f8fafc",
+    backgroundColor: "#13273d",
     fontSize: 16,
-    color: "#0f172a",
+    color: "#ffffff",
   },
   buttonContainer: {
     marginTop: 5,

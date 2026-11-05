@@ -17,7 +17,7 @@ export const styles = StyleSheet.create({
     flex: 1,
   },
   title: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: "800",
     color: "#ffffff",
     textAlign: "center",
@@ -33,14 +33,16 @@ export const styles = StyleSheet.create({
   logoutButton: {
     position: "absolute",
     right: 16,
-    backgroundColor: "#fee2e2",
+    backgroundColor: "#b52a2a",
     paddingVertical: 6,
     paddingHorizontal: 12,
     borderRadius: 6,
+    borderWidth: 1,
+    borderColor: "#cbd5e1",
   },
   logoutText: {
-    color: "#dc2626",
-    fontSize: 15,
-    fontWeight: "600",
+    color: "#ffffff",
+    fontSize: 17,
+    fontWeight: "700",
   },
 });
