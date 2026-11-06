@@ -5,16 +5,20 @@ import {
   ScrollView,
   TouchableOpacity,
   RefreshControl,
+  Alert,
+  Platform,
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Occurrence, User } from "../types";
 import { useFocusEffect } from "@react-navigation/native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getOccurrences } from "../services/storage";
 import { Header } from "../components/Header";
 import { Button } from "../components/Button";
 import { Card } from "../components/Card";
 import { styles } from "../styles/OccurrenceListScreen.styles";
+
 
 interface OccurrenceListScreenProps {
   user: User;
@@ -43,7 +47,10 @@ export const OccurrenceListScreen: React.FC<OccurrenceListScreenProps> = ({
   };
 
   useEffect(() => {
-    loadData();
+    // Linha mágica: força a limpeza do AsyncStorage uma vez para tirar os "proba 1", etc.
+    //AsyncStorage.removeItem("@nuclear_sentinel_occurrences").then(() => {
+      loadData();
+    //});
   }, []);
 
   const getNormalizedStatus = (status: string) => {
@@ -71,6 +78,31 @@ export const OccurrenceListScreen: React.FC<OccurrenceListScreenProps> = ({
     }
   };
 
+  const showAlert = (title: string, message: string, onOk?: () => void) => {
+    if (Platform.OS === "web") {
+      window.alert(`${title}\n\n${message}`);
+      if (onOk) onOk();
+    } else {
+      Alert.alert(title, message, [
+        {
+          text: "OK",
+          onPress: () => {
+            if (onOk) onOk();
+          },
+        },
+      ]);
+    }
+  };
+
+  const handleResetOccurrences = async () => {
+    try {
+      await AsyncStorage.removeItem("@nuclear_sentinel_occurrences");
+      loadData(); // Recarrega a lista (ela vai voltar limpa ou com os mocks originais limpos do mockData)
+      showAlert("Sucesso", "Ocorrências de teste limpas com sucesso!");
+    } catch (error) {
+      showAlert("Erro", "Não foi possível limpar as ocorrências.");
+    }
+  };
   return (
     <SafeAreaView style={styles.container} edges={["top", "left", "right"]}>
       <StatusBar style="light"/>
