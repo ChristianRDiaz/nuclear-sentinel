@@ -1,7 +1,6 @@
 export type AlertLevel = "normal" | "atípica" | "crítica";
 export type OccurrenceStatus =
-  | "aberta"
-  | "em análise"
+  | "em processo"
   | "resolvida"
   | "pendente";
 

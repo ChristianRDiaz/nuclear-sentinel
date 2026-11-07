@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
+import { Modal } from "../components/Modal";
 import { Button } from "../components/Button";
 import { Input } from "../components/Input";
 import { Header } from "../components/Header";
@@ -41,16 +42,23 @@ export const OccurrenceCreateScreen: React.FC<OccurrenceCreateScreenProps> = ({
     description?: string;
   }>({});
 
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalTitle, setModalTitle] = useState("");
+  const [modalMessage, setModalMessage] = useState("");
+  const [shouldSucceedOnClose, setShouldSucceedOnClose] = useState(false);
+
   const [permissionError, setPermissionError] = useState<string | null>(null);
 
   const handleSave = async () => {
     if (!canCreateOccurrence(user)) {
-      setPermissionError(
+      setModalTitle("Atenção");
+      setModalMessage(
         "Seu perfil não possui permissão para registrar novas ocorrências.",
       );
+      setShouldSucceedOnClose(false);
+      setModalVisible(true);
       return;
     }
-    setPermissionError(null);
 
     const newErrors: { title?: string; sector?: string; description?: string } =
       {};
@@ -83,12 +91,25 @@ export const OccurrenceCreateScreen: React.FC<OccurrenceCreateScreenProps> = ({
         author: user.name,
       });
       setLoading(false);
-      onSuccess();
+
+      // Configura o modal de sucesso
+      setModalTitle("Sucesso");
+      setModalMessage("Ocorrência cadastrada com sucesso!");
+      setShouldSucceedOnClose(true);
+      setModalVisible(true);
     } catch (error) {
       setLoading(false);
-      setPermissionError(
-        "Não foi possível salvar a ocorrência. Tente novamente.",
-      );
+      setModalTitle("Erro");
+      setModalMessage("Não foi possível salvar a ocorrência. Tente novamente.");
+      setShouldSucceedOnClose(false);
+      setModalVisible(true);
+    }
+  };
+
+  const handleCloseModal = () => {
+    setModalVisible(false);
+    if (shouldSucceedOnClose) {
+      onSuccess();
     }
   };
 
@@ -217,6 +238,14 @@ export const OccurrenceCreateScreen: React.FC<OccurrenceCreateScreenProps> = ({
           <Button title="Cancelar" onPress={onCancel} variant="secondary" />
         </View>
       </ScrollView>
+      <Modal
+        visible={modalVisible}
+        title={modalTitle}
+        message={modalMessage}
+        onClose={handleCloseModal}
+        onConfirm={handleCloseModal}
+        confirmText="Entendido"
+      />
     </SafeAreaView>
   );
 };

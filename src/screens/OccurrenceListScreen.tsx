@@ -47,7 +47,8 @@ export const OccurrenceListScreen: React.FC<OccurrenceListScreenProps> = ({
   };
 
   useEffect(() => {
-    // Linha mágica: força a limpeza do AsyncStorage uma vez para tirar os "proba 1", etc.
+    // Linha mágica: força a limpeza do AsyncStorage e deixa as ocorrencias mockadas.
+    // vc pode descomentar essa linha se quiser manter as ocorrencias no AsyncStorage entre reinicios do app.
     //AsyncStorage.removeItem("@nuclear_sentinel_occurrences").then(() => {
       loadData();
     //});
@@ -55,9 +56,8 @@ export const OccurrenceListScreen: React.FC<OccurrenceListScreenProps> = ({
 
   const getNormalizedStatus = (status: string) => {
     const s = status ? status.toLowerCase().trim() : "";
-    if (s === "resolvida" || s === "resolvido") return "resolvido";
-    if (s === "em processo" || s === "processo" || s === "em análise")
-      return "em processo";
+    if (s === "resolvida" || s === "resolvido") return "resolvida";
+    if (s === "em processo" || s === "processo") return "em processo";
     return "pendente";
   };
 
@@ -105,7 +105,7 @@ export const OccurrenceListScreen: React.FC<OccurrenceListScreenProps> = ({
   };
   return (
     <SafeAreaView style={styles.container} edges={["top", "left", "right"]}>
-      <StatusBar style="light"/>
+      <StatusBar style="light" />
       <Header
         title={`Olá, ${user.name}`}
         subtitle={`Perfil: ${user.role.toUpperCase()}`}
@@ -121,7 +121,7 @@ export const OccurrenceListScreen: React.FC<OccurrenceListScreenProps> = ({
         {[
           { id: "pendente", label: "Pendentes" },
           { id: "em processo", label: "Em Processo" },
-          { id: "resolvido", label: "Resolvidas" },
+          { id: "resolvida", label: "Resolvidas" },
           { id: "todas", label: "Todas" },
         ].map((tab) => (
           <TouchableOpacity

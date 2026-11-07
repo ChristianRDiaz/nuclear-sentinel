@@ -4,6 +4,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 import { Header } from "../components/Header";
 import { Button } from "../components/Button";
+import { Modal } from "../components/Modal";
 import { Occurrence, OccurrenceStatus, User } from "../types";
 import { updateOccurrenceStatus } from "../services/storage";
 import { styles } from "../styles/OccurrenceDetailScreen.styles";
@@ -24,22 +25,10 @@ export const OccurrenceDetailScreen: React.FC<OccurrenceDetailScreenProps> = ({
   );
   const [loading, setLoading] = useState(false);
 
-  // Função auxiliar para exibir alertas compatíveis com Mobile e Web
-  const showAlert = (title: string, message: string, onOk?: () => void) => {
-    if (Platform.OS === "web") {
-      window.alert(`${title}\n\n${message}`);
-      if (onOk) onOk();
-    } else {
-      Alert.alert(title, message, [
-        {
-          text: "OK",
-          onPress: () => {
-            if (onOk) onOk();
-          },
-        },
-      ]);
-    }
-  };
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalTitle, setModalTitle] = useState("");
+  const [modalMessage, setModalMessage] = useState("");
+  const [shouldGoBackOnClose, setShouldGoBackOnClose] = useState(false);
 
   const handleStatusChange = async (newStatus: OccurrenceStatus) => {
     try {
@@ -47,15 +36,23 @@ export const OccurrenceDetailScreen: React.FC<OccurrenceDetailScreenProps> = ({
       await updateOccurrenceStatus(occurrence.id, newStatus);
       setCurrentStatus(newStatus);
       setLoading(false);
-
-      showAlert(
-        "Sucesso",
-        `Status alterado para "${newStatus.toUpperCase()}".`,
-        () => onBack(),
-      );
+      setModalTitle("Sucesso");
+      setModalMessage(`Status alterado para "${newStatus.toUpperCase()}".`);
+      setShouldGoBackOnClose(true);
+      setModalVisible(true);
     } catch (error) {
       setLoading(false);
-      showAlert("Erro", "Não foi possível alterar o status.");
+      setModalTitle("Erro");
+      setModalMessage("Não foi possível alterar o status.");
+      setShouldGoBackOnClose(false);
+      setModalVisible(true);
+    }
+  };
+
+  const handleCloseModal = () => {
+    setModalVisible(false);
+    if (shouldGoBackOnClose) {
+      onBack(); 
     }
   };
 
@@ -88,24 +85,33 @@ export const OccurrenceDetailScreen: React.FC<OccurrenceDetailScreenProps> = ({
               <View style={styles.statusButtonsRow}>
                 <Button
                   title="Pendente"
-                  onPress={() => handleStatusChange("aberta")}
+                  onPress={() => handleStatusChange("pendente")}
                   variant="primary"
                   style={styles.statusBtn}
-                  disabled={loading}
+                  disabled={
+                    loading ||
+                    occurrence.status === "em processo" ||
+                    occurrence.status === "resolvida"
+                  }
                 />
+
                 <Button
-                  title="Processo"
-                  onPress={() => handleStatusChange("em análise")}
+                  title="Em Processo"
+                  onPress={() => handleStatusChange("em processo")}
                   variant="primary"
                   style={styles.statusBtn}
-                  disabled={loading}
+                  disabled={
+                    loading ||
+                    occurrence.status === "em processo" ||
+                    occurrence.status === "resolvida"
+                  }
                 />
                 <Button
-                  title="Resolvido"
+                  title="Resolvida"
                   onPress={() => handleStatusChange("resolvida")}
                   variant="primary"
                   style={styles.statusBtn}
-                  disabled={loading}
+                  disabled={loading || occurrence.status === "resolvida"}
                 />
               </View>
             </View>
@@ -119,6 +125,14 @@ export const OccurrenceDetailScreen: React.FC<OccurrenceDetailScreenProps> = ({
           style={styles.backButton}
         />
       </ScrollView>
+      <Modal
+        visible={modalVisible}
+        title={modalTitle}
+        message={modalMessage}
+        onClose={handleCloseModal}
+        onConfirm={handleCloseModal}
+        confirmText="Entendido"
+      />
     </SafeAreaView>
   );
 };

@@ -9,7 +9,7 @@ export const styles = StyleSheet.create({
     padding: 20,
   },
   modalContainer: {
-    backgroundColor: "#fff",
+    backgroundColor: "#13273d",
     borderRadius: 12,
     padding: 20,
     width: "100%",
@@ -17,15 +17,15 @@ export const styles = StyleSheet.create({
     alignItems: "center",
   },
   title: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: "700",
-    color: "#0f172a",
+    color: "#fdfdfd",
     marginBottom: 8,
     textAlign: "center",
   },
   message: {
     fontSize: 14,
-    color: "#475569",
+    color: "#fbfbfc",
     textAlign: "center",
     marginBottom: 20,
   },
@@ -43,7 +43,7 @@ export const styles = StyleSheet.create({
     alignItems: "center",
   },
   cancelText: {
-    color: "#475569",
+    color: "#f7f8f8",
     fontWeight: "600",
   },
   confirmButton: {
@@ -52,6 +52,8 @@ export const styles = StyleSheet.create({
     paddingVertical: 10,
     borderRadius: 6,
     alignItems: "center",
+    borderWidth: 1,
+    borderColor: "#1e3a8a",
   },
   confirmText: {
     color: "#fff",
