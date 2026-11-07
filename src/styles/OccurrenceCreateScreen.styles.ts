@@ -59,4 +59,19 @@ export const styles = StyleSheet.create({
     marginTop: 5,
     gap: 12,
   },
+  radioSelectedNormal: {
+    backgroundColor: "#2e7d32",
+    borderColor: "#2e7d32",
+    fontWeight: "800",
+  },
+  radioSelectedAtipica: {
+    backgroundColor: "#e67e22", 
+    borderColor: "#e67e22",
+    fontWeight: "800",
+  },
+  radioSelectedCritica: {
+    backgroundColor: "#c0392b",
+    borderColor: "#c0392b",
+    fontWeight: "800",
+  },
 });

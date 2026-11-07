@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import {
   View,
   Text,
-  Alert,
   Image,
   ScrollView,
   KeyboardAvoidingView,
@@ -28,44 +27,41 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess }) => {
   const [senha, setSenha] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const showAlert = (title: string, message: string, onOk?: () => void) => {
-    if (Platform.OS === "web") {
-      window.alert(`${title}\n\n${message}`);
-      if (onOk) onOk();
-    } else {
-      Alert.alert(title, message, [
-        {
-          text: "OK",
-          onPress: () => {
-            if (onOk) onOk();
-          },
-        },
-      ]);
-    }
-  };
+  const [errors, setErrors] = useState<{ email?: string; senha?: string }>({});
+  const [authError, setAuthError] = useState<string | null>(null);
 
   const handleLogin = async () => {
+    setAuthError(null);
+    const newErrors: { email?: string; senha?: string } = {};
+
     if (!email.trim()) {
-      showAlert("Atenção", "Por favor, insira o seu e-mail.");
-      return;
+      newErrors.email = "Por favor, insira o seu e-mail.";
     }
 
     if (!senha.trim()) {
-      showAlert("Atenção", "Por favor, digite a sua senha.");
+      newErrors.senha = "Por favor, digite a sua senha.";
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
       return;
     }
 
+    setErrors({});
     setLoading(true);
-    const user = await authenticateUser(email.trim(), senha.trim());
-    setLoading(false);
 
-    if (user) {
-      onLoginSuccess(user);
-    } else {
-      Alert.alert(
-        "Erro ao autenticar",
-        "E-mail ou senha incorretos. Verifique os seus dados.",
-      );
+    try {
+      const user = await authenticateUser(email.trim(), senha.trim());
+      setLoading(false);
+
+      if (user) {
+        onLoginSuccess(user);
+      } else {
+        setAuthError("E-mail ou senha incorretos. Verifique os seus dados.");
+      }
+    } catch (error) {
+      setLoading(false);
+      setAuthError("Ocorreu um erro ao tentar autenticar. Tente novamente.");
     }
   };
 
@@ -75,6 +71,19 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess }) => {
       showsVerticalScrollIndicator={false}
       keyboardShouldPersistTaps="handled"
     >
+      {authError && (
+        <Text
+          style={{
+            color: "#e63946",
+            marginBottom: 16,
+            fontWeight: "600",
+            fontSize: 14,
+            textAlign: "center",
+          }}
+        >
+          {authError}
+        </Text>
+      )}
       <Header title="Nuclear Sentinel" subtitle="Acesso ao Sistema Nuclear" />
 
       <Image
@@ -89,18 +98,30 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess }) => {
             label="E-mail da empresa"
             placeholder="ex: operador@amazul.com"
             value={email}
-            onChangeText={setEmail}
+            onChangeText={(text) => {
+              setEmail(text);
+              if (errors.email)
+                setErrors((prev) => ({ ...prev, email: undefined }));
+              if (authError) setAuthError(null);
+            }}
             autoCapitalize="none"
             keyboardType="email-address"
+            error={errors.email}
           />
 
           <Input
             label="Senha"
             placeholder="ex: senha123"
             value={senha}
-            onChangeText={setSenha}
+            onChangeText={(text) => {
+              setSenha(text);
+              if (errors.senha)
+                setErrors((prev) => ({ ...prev, senha: undefined }));
+              if (authError) setAuthError(null);
+            }}
             autoCapitalize="none"
             secureTextEntry
+            error={errors.senha}
           />
 
           <Button
@@ -114,7 +135,9 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess }) => {
         <View style={styles.hintContainer}>
           <Text style={styles.hintTitle}>Contas de Teste:</Text>
           <Text style={styles.hintText}>• Operador: operador@amazul.com</Text>
-          <Text style={styles.hintText}>• Supervisor: supervisor@amazul.com</Text>
+          <Text style={styles.hintText}>
+            • Supervisor: supervisor@amazul.com
+          </Text>
         </View>
       </View>
     </ScrollView>
@@ -137,4 +160,4 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess }) => {
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
-};;
+};

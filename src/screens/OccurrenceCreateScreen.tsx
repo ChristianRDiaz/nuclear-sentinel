@@ -1,5 +1,12 @@
 import React, { useState } from "react";
-import { View, Text, ScrollView, Alert, TouchableOpacity ,Platform} from "react-native";
+import {
+  View,
+  Text,
+  ScrollView,
+  Alert,
+  TouchableOpacity,
+  Platform,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 import { Button } from "../components/Button";
@@ -9,6 +16,7 @@ import { saveOccurrence } from "../services/storage";
 import { AlertLevel, OccurrenceStatus, User } from "../types";
 import { canCreateOccurrence } from "../utils/permissions";
 import { styles } from "../styles/OccurrenceCreateScreen.styles";
+import { autoClassifyOccurrence } from "../utils/classification";
 
 interface OccurrenceCreateScreenProps {
   user: User;
@@ -27,38 +35,42 @@ export const OccurrenceCreateScreen: React.FC<OccurrenceCreateScreenProps> = ({
   const [alertLevel, setAlertLevel] = useState<AlertLevel>("normal");
   const [loading, setLoading] = useState(false);
 
-  const showAlert = (title: string, message: string, onOk?: () => void) => {
-    if (Platform.OS === "web") {
-      window.alert(`${title}\n\n${message}`);
-      if (onOk) onOk();
-    } else {
-      Alert.alert(title, message, [
-        {
-          text: "OK",
-          onPress: () => {
-            if (onOk) onOk();
-          },
-        },
-      ]);
-    }
-  };
+  const [errors, setErrors] = useState<{
+    title?: string;
+    sector?: string;
+    description?: string;
+  }>({});
+
+  const [permissionError, setPermissionError] = useState<string | null>(null);
 
   const handleSave = async () => {
     if (!canCreateOccurrence(user)) {
-      showAlert(
-        "Acesso Negado",
+      setPermissionError(
         "Seu perfil não possui permissão para registrar novas ocorrências.",
       );
       return;
     }
+    setPermissionError(null);
 
-    if (!title.trim() || !description.trim() || !sector.trim()) {
-      showAlert(
-        "Erro de Validação",
-        "Por favor, preencha todos os campos obrigatórios (Título, Descrição e Setor).",
-      );
+    const newErrors: { title?: string; sector?: string; description?: string } =
+      {};
+
+    if (!title.trim()) {
+      newErrors.title = "O título é obrigatório.";
+    }
+    if (!sector.trim()) {
+      newErrors.sector = "Informe o setor da ocorrência.";
+    }
+    if (!description.trim()) {
+      newErrors.description = "A descrição não pode ficar em branco.";
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
       return;
     }
+
+    setErrors({});
 
     try {
       setLoading(true);
@@ -67,15 +79,29 @@ export const OccurrenceCreateScreen: React.FC<OccurrenceCreateScreenProps> = ({
         description: description.trim(),
         sector: sector.trim(),
         alertLevel,
-        status: "aberta" as OccurrenceStatus,
+        status: "pendente" as OccurrenceStatus,
         author: user.name,
       });
       setLoading(false);
-      Alert.alert("Sucesso", "Ocorrência registrada com sucesso!");
       onSuccess();
     } catch (error) {
       setLoading(false);
-      Alert.alert("Erro", "Não foi possível salvar a ocorrência.");
+      setPermissionError(
+        "Não foi possível salvar a ocorrência. Tente novamente.",
+      );
+    }
+  };
+
+  const getSelectedStyle = (level: AlertLevel) => {
+    switch (level) {
+      case "normal":
+        return styles.radioSelectedNormal;
+      case "atípica":
+        return styles.radioSelectedAtipica;
+      case "crítica":
+        return styles.radioSelectedCritica;
+      default:
+        return {};
     }
   };
 
@@ -89,44 +115,73 @@ export const OccurrenceCreateScreen: React.FC<OccurrenceCreateScreenProps> = ({
         subtitle={`Operador: ${user.name} (${user.role.toUpperCase()})`}
       />
 
+      {permissionError && (
+        <Text
+          style={{
+            color: "#e63946",
+            marginBottom: 16,
+            fontWeight: "600",
+            fontSize: 14,
+          }}
+        >
+          {permissionError}
+        </Text>
+      )}
+
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <Input
           label="Título da Ocorrência *"
           placeholder="Ex: Oscilação térmica no reator"
           value={title}
-          onChangeText={setTitle}
+          onChangeText={(text) => {
+            setTitle(text);
+            if (errors.title)
+              setErrors((prev) => ({ ...prev, title: undefined }));
+            // Classifica automaticamente combinando o novo título com a descrição atual
+            const level = autoClassifyOccurrence(text, description);
+            setAlertLevel(level);
+          }}
+          error={errors.title}
         />
 
         <Input
           label="Setor / Zona *"
           placeholder="Ex: Setor C - Contenção"
           value={sector}
-          onChangeText={setSector}
+          onChangeText={(text) => {
+            setSector(text);
+            if (errors.sector)
+              setErrors((prev) => ({ ...prev, sector: undefined }));
+          }}
+          error={errors.sector}
         />
 
         <View style={styles.formGroup}>
           <Text style={styles.label}>Nível de Alerta *</Text>
           <View style={styles.radioContainer}>
-            {alertLevels.map((level) => (
-              <TouchableOpacity
-                key={level}
-                style={[
-                  styles.radioButton,
-                  alertLevel === level && styles.radioSelected,
-                ]}
-                onPress={() => setAlertLevel(level)}
-                activeOpacity={0.8}
-              >
-                <Text
+            {alertLevels.map((level) => {
+              const isSelected = alertLevel === level;
+              return (
+                <TouchableOpacity
+                  key={level}
                   style={[
-                    styles.radioText,
-                    alertLevel === level && styles.radioTextSelected,
+                    styles.radioButton,
+                    isSelected && getSelectedStyle(level),
                   ]}
+                  onPress={() => setAlertLevel(level)}
+                  activeOpacity={0.8}
                 >
-                  {level.toUpperCase()}
-                </Text>
-              </TouchableOpacity>
-            ))}
+                  <Text
+                    style={[
+                      styles.radioText,
+                      isSelected && styles.radioTextSelected,
+                    ]}
+                  >
+                    {level.toUpperCase()}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
           </View>
         </View>
 
@@ -134,10 +189,21 @@ export const OccurrenceCreateScreen: React.FC<OccurrenceCreateScreenProps> = ({
           label="Descrição Detalhada *"
           placeholder="Descreva o que foi observado..."
           value={description}
-          onChangeText={setDescription}
+          onChangeText={(text) => {
+            setDescription(text);
+            if (errors.description)
+              setErrors((prev) => ({ ...prev, description: undefined }));
+
+            const suggestedLevel = autoClassifyOccurrence(title, text);
+            setAlertLevel(suggestedLevel);
+          }}
           multiline
           numberOfLines={4}
-          style={styles.textArea}
+          style={[
+            styles.textArea,
+            errors.description && { borderColor: "#e63946" },
+          ]}
+          error={errors.description}
         />
 
         <View style={styles.buttonContainer}>
@@ -153,4 +219,4 @@ export const OccurrenceCreateScreen: React.FC<OccurrenceCreateScreenProps> = ({
       </ScrollView>
     </SafeAreaView>
   );
-};;
+};

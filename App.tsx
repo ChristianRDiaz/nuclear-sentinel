@@ -2,16 +2,11 @@ import React, { useEffect } from "react";
 import { StatusBar, Platform, StyleSheet } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { AppNavigator } from "./src/navigation/AppNavigatior";
-import { clearSession } from "./src/services/storage";
   
-export default function App() {
-  useEffect(() => {
-    clearSession();
-  }, []);
-  
+export default function App() {  
   return (
     <SafeAreaProvider style={styles.container}>
-      <StatusBar style="light" />
+      <StatusBar/>
       <AppNavigator />
     </SafeAreaProvider>
   );
