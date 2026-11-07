@@ -1,6 +1,5 @@
 import { AlertLevel } from "../types";
 
-// Listas de palavras-chave organizadas por severidade
 const CRITICAL_KEYWORDS = [
   "vazamento",
   "radiação",
@@ -17,8 +16,6 @@ const CRITICAL_KEYWORDS = [
   "falha grave",
   "invasão",
   "invasao",
-  "contenção",
-  "contencao",
 ];
 
 const ATYPICAL_KEYWORDS = [
@@ -37,20 +34,35 @@ const ATYPICAL_KEYWORDS = [
   "sensor",
 ];
 
+const STABLE_MODIFIERS = [
+  "estável",
+  "estavel",
+  "normal",
+  "controlado",
+  "seguro",
+  "normalizado",
+];
+
 export const autoClassifyOccurrence = (
   title: string,
   description: string,
 ): AlertLevel => {
   const fullText = `${title} ${description}`.toLowerCase();
 
-  // Check para nível Crítico
+  const hasStableContext = STABLE_MODIFIERS.some((mod) =>
+    fullText.includes(mod),
+  );
+
   const isCritical = CRITICAL_KEYWORDS.some((word) => fullText.includes(word));
-  if (isCritical) return "crítica";
 
-  // Check para nível Atípico
+  if (isCritical && !hasStableContext) {
+    return "crítica";
+  }
+
   const isAtypical = ATYPICAL_KEYWORDS.some((word) => fullText.includes(word));
-  if (isAtypical) return "atípica";
+  if (isAtypical || (isCritical && hasStableContext)) {
+    return "atípica";
+  }
 
-  // Padrão se não houver termos de risco
   return "normal";
 };

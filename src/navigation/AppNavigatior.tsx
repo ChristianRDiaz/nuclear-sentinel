@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { View, ActivityIndicator, StyleSheet } from "react-native";
 import { User, Occurrence } from "../types";
-import { getSession } from "../services/storage";
-
+import { getSession , clearSession} from "../services/storage";
 import { LoginScreen } from "../screens/LoginScreen";
 import { OccurrenceListScreen } from "../screens/OccurrenceListScreen";
 import { OccurrenceCreateScreen } from "../screens/OccurrenceCreateScreen";
@@ -56,7 +55,12 @@ export const AppNavigator: React.FC = () => {
             setCurrentScreen("detail");
           }}
           onCreateNew={() => setCurrentScreen("create")}
-          onLogout={() => {
+          onLogout={async () => {
+            try {
+              await clearSession(); 
+            } catch (error) {
+              console.error("Erro ao limpar sessão:", error);
+            }
             setUser(null);
             setCurrentScreen("login");
           }}
