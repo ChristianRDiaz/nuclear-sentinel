@@ -101,7 +101,7 @@ Certifique-se de ter instalado na sua máquina:
     npx expo start
     ```
 
-5.  **Abrir a aplicação no telemóvel:**
+5.  **Abrir a aplicação no celular:**
 
     -   Abra o Expo Go.
     -   Leia o QR Code apresentado no terminal ou na página aberta pelo
